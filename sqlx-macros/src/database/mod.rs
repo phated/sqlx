@@ -10,6 +10,7 @@ pub enum ParamChecking {
 pub trait DatabaseExt: Database {
     const DATABASE_PATH: &'static str;
     const ROW_PATH: &'static str;
+    const NAME: &'static str;
 
     const PARAM_CHECKING: ParamChecking;
 
@@ -34,13 +35,15 @@ macro_rules! impl_database_ext {
             $($(#[$meta:meta])? $ty:ty $(| $input:ty)?),*$(,)?
         },
         ParamChecking::$param_checking:ident,
-        feature-types: $name:ident => $get_gate:expr,
-        row = $row:path
+        feature-types: $ty_info:ident => $get_gate:expr,
+        row = $row:path,
+        name = $db_name:literal
     ) => {
         impl $crate::database::DatabaseExt for $database {
             const DATABASE_PATH: &'static str = stringify!($database);
             const ROW_PATH: &'static str = stringify!($row);
             const PARAM_CHECKING: $crate::database::ParamChecking = $crate::database::ParamChecking::$param_checking;
+            const NAME: &'static str = $db_name;
 
             fn param_type_for_id(info: &Self::TypeInfo) -> Option<&'static str> {
                 match () {
@@ -70,7 +73,7 @@ macro_rules! impl_database_ext {
                 }
             }
 
-            fn get_feature_gate($name: &Self::TypeInfo) -> Option<&'static str> {
+            fn get_feature_gate($ty_info: &Self::TypeInfo) -> Option<&'static str> {
                 $get_gate
             }
         }

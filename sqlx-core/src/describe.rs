@@ -7,6 +7,7 @@ use crate::database::Database;
 /// The return type of [`Executor::describe`].
 ///
 /// [`Executor::describe`]: crate::executor::Executor::describe
+#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct Describe<DB>
 where
@@ -35,6 +36,7 @@ where
 }
 
 /// A single column of a result set.
+#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct Column<DB>
 where

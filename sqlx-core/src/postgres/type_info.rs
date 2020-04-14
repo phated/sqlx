@@ -9,6 +9,7 @@ use std::sync::Arc;
 
 /// Type information for a Postgres SQL type.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
 pub struct PgTypeInfo {
     pub(crate) id: Option<TypeId>,
     pub(crate) name: SharedStr,
@@ -137,6 +138,8 @@ impl TypeInfo for PgTypeInfo {
 
 /// Copy of `Cow` but for strings; clones guaranteed to be cheap.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "offline", serde(from = "String", into = "String"))]
 pub(crate) enum SharedStr {
     Static(&'static str),
     Arc(Arc<str>),

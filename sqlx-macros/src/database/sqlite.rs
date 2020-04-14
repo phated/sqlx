@@ -10,5 +10,6 @@ impl_database_ext! {
     },
     ParamChecking::Weak,
     feature-types: _info => None,
-    row = sqlx::sqlite::SqliteRow
+    row = sqlx::sqlite::SqliteRow,
+    name = "SQLite"
 }

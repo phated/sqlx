@@ -46,5 +46,6 @@ impl_database_ext! {
     },
     ParamChecking::Weak,
     feature-types: info => info.type_feature_gate(),
-    row = sqlx::mysql::MySqlRow
+    row = sqlx::mysql::MySqlRow,
+    name = "MySQL/MariaDB"
 }
