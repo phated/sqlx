@@ -37,14 +37,15 @@ impl PgTypeInfo {
     #[doc(hidden)]
     pub fn get_custom_type(&self) -> Option<&'static str> {
         match self.id? {
-            TypeId::NODE_TYPE => Some("NodeType"),
-            TypeId::CARD_RARITY => Some("CardRarity"),
-            TypeId::CARD_CATEGORY => Some("CardCategory"),
-            TypeId::MODE_TYPE => Some("ModeType"),
-            TypeId::BATTLE_TYPE => Some("BattleType"),
+            TypeId::_NODE_TYPE | TypeId::NODE_TYPE => Some("NodeType"),
+            TypeId::_CARD_RARITY | TypeId::CARD_RARITY => Some("CardRarity"),
+            TypeId::_CARD_CATEGORY | TypeId::CARD_CATEGORY => Some("CardCategory"),
+            TypeId::_MODE_TYPE | TypeId::MODE_TYPE => Some("ModeType"),
+            TypeId::_BATTLE_TYPE | TypeId::BATTLE_TYPE => Some("BattleType"),
+            TypeId::ARRAY_BATTLE_ICON => Some("Vec<BattleIcon>"),
             TypeId::BATTLE_ICON => Some("BattleIcon"),
-            TypeId::CHARACTER_TRAIT => Some("CharacterTrait"),
-            TypeId::FACTION => Some("Faction"),
+            TypeId::_CHARACTER_TRAIT | TypeId::CHARACTER_TRAIT => Some("CharacterTrait"),
+            TypeId::_FACTION | TypeId::FACTION => Some("Faction"),
 
             _ => None,
         }

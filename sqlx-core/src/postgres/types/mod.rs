@@ -258,6 +258,7 @@ pub(crate) fn try_resolve_type_name(oid: u32) -> Option<&'static str> {
         TypeId::MODE_TYPE => "MODE_TYPE",
         TypeId::BATTLE_TYPE => "BATTLE_TYPE",
         TypeId::BATTLE_ICON => "BATTLE_ICON",
+        TypeId::ARRAY_BATTLE_ICON => "BATTLE_ICON[]",
         TypeId::CHARACTER_TRAIT => "CHARACTER_TRAIT",
         TypeId::FACTION => "FACTION",
 

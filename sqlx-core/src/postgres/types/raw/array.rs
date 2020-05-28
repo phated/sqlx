@@ -10,7 +10,7 @@ use std::marker::PhantomData;
 // https://git.postgresql.org/gitweb/?p=postgresql.git;a=blob;f=src/include/utils/array.h;h=7f7e744cb12bc872f628f90dad99dfdf074eb314;hb=master#l6
 // https://git.postgresql.org/gitweb/?p=postgresql.git;a=blob;f=src/backend/utils/adt/arrayfuncs.c;h=7a4a5aaa86dc1c8cffa2d899c89511dc317d485b;hb=master#l1547
 
-pub(crate) struct PgArrayEncoder<'enc, T> {
+pub struct PgArrayEncoder<'enc, T> {
     count: usize,
     len_start_index: usize,
     buf: &'enc mut PgRawBuffer,
@@ -21,7 +21,7 @@ impl<'enc, T> PgArrayEncoder<'enc, T>
 where
     T: Encode<Postgres> + Type<Postgres>,
 {
-    pub(crate) fn new(buf: &'enc mut PgRawBuffer) -> Self {
+    pub fn new(buf: &'enc mut PgRawBuffer) -> Self {
         let ty = <T as Type<Postgres>>::type_info();
 
         // ndim
@@ -56,7 +56,7 @@ where
         }
     }
 
-    pub(crate) fn encode(&mut self, item: T) {
+    pub fn encode(&mut self, item: T) {
         // Allocate space for the length of the encoded elemement up front
         let el_len_index = self.buf.len();
         self.buf.put_i32::<BE>(0);
@@ -79,7 +79,7 @@ where
         self.count += 1;
     }
 
-    pub(crate) fn finish(&mut self) {
+    pub fn finish(&mut self) {
         const I32_SIZE: usize = std::mem::size_of::<i32>();
 
         let size_bytes = (self.count as i32).to_be_bytes();
@@ -89,7 +89,7 @@ where
     }
 }
 
-pub(crate) struct PgArrayDecoder<'de, T> {
+pub struct PgArrayDecoder<'de, T> {
     inner: PgSequenceDecoder<'de>,
     phantom: PhantomData<T>,
 }
@@ -99,7 +99,7 @@ where
     T: for<'arr> Decode<'arr, Postgres>,
     T: Type<Postgres>,
 {
-    pub(crate) fn new(value: PgValue<'de>) -> crate::Result<Self> {
+    pub fn new(value: PgValue<'de>) -> crate::Result<Self> {
         let mut data = value.try_get()?;
 
         let element_oid = match data {

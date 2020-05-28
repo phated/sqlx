@@ -3,7 +3,7 @@ mod numeric;
 mod record;
 mod sequence;
 
-pub(crate) use array::{PgArrayDecoder, PgArrayEncoder};
+pub use array::{PgArrayDecoder, PgArrayEncoder};
 
 // Used in integration tests
 pub use numeric::{PgNumeric, PgNumericSign};
