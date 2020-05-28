@@ -42,9 +42,7 @@ glob = "0.3.0"
 cargo_metadata = "0.10.0"
 
 [features]
-default = [ "postgres", "sqlite", "mysql" ]
+default = [ "postgres" ]
 
 # database
-mysql = [ "sqlx/mysql" ]
 postgres = [ "sqlx/postgres" ]
-sqlite = [ "sqlx/sqlite" ]
