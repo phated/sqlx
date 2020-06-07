@@ -58,7 +58,7 @@ macro_rules! impl_database_ext {
                         $(#[$meta])?
                         _ if sqlx_core::types::TypeInfo::compatible(&<$ty as sqlx_core::types::Type<$database>>::type_info(), &info) => Some(input_ty!($ty $(, $input)?)),
                     )*
-                    _ => None
+                    _ => info.get_custom_type()
                 }
             }
 
