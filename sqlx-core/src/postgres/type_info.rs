@@ -189,6 +189,22 @@ impl PgTypeInfo {
         }
     }
 
+    #[doc(hidden)]
+    pub fn get_custom_type(&self) -> Option<&'static str> {
+        match self.0.name() {
+            "NODE_TYPE" | "node_type" => Some("NodeType"),
+            "CARD_RARITY" | "card_rarity" => Some("CardRarity"),
+            "CARD_CATEGORY" | "card_category" => Some("CardCategory"),
+            "MODE_TYPE" | "mode_type" => Some("ModeType"),
+            "BATTLE_TYPE" | "battle_type" => Some("BattleType"),
+            "BATTLE_ICON" | "battle_icon" => Some("BattleIcon"),
+            "CHARACTER_TRAIT" | "character_trait" => Some("CharacterTrait"),
+            "FACTION" | "faction" => Some("Faction"),
+
+            _ => None,
+        }
+    }
+
     /// Create a `PgTypeInfo` from a type name.
     ///
     /// The OID for the type will be fetched from Postgres on use of
