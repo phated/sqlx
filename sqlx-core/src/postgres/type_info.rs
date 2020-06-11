@@ -189,6 +189,15 @@ impl PgTypeInfo {
         }
     }
 
+    #[doc(hidden)]
+    pub fn get_custom_type(&self) -> Option<&'static str> {
+        match self.0 {
+            PgType::DeclareWithName(UStr::Static(name)) => Some(name),
+
+            _ => None,
+        }
+    }
+
     /// Create a `PgTypeInfo` from a type name.
     ///
     /// The OID for the type will be fetched from Postgres on use of
@@ -810,6 +819,16 @@ impl PgTypeInfo {
 
     pub(crate) const INT8_RANGE: Self = Self(PgType::Int8Range);
     pub(crate) const INT8_RANGE_ARRAY: Self = Self(PgType::Int8RangeArray);
+
+    // Custom Types
+    pub(crate) const NODE_TYPE: Self = Self::with_name("NODE_TYPE");
+    pub(crate) const CARD_RARITY: Self = Self::with_name("CARD_RARITY");
+    pub(crate) const CARD_CATEGORY: Self = Self::with_name("CARD_CATEGORY");
+    pub(crate) const MODE_TYPE: Self = Self::with_name("MODE_TYPE");
+    pub(crate) const BATTLE_TYPE: Self = Self::with_name("BATTLE_TYPE");
+    pub(crate) const BATTLE_ICON: Self = Self::with_name("BATTLE_ICON");
+    pub(crate) const CHARACTER_TRAIT: Self = Self::with_name("CHARACTER_TRAIT");
+    pub(crate) const FACTION: Self = Self::with_name("FACTION");
 }
 
 impl Display for PgTypeInfo {
