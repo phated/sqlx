@@ -26,6 +26,8 @@ pub trait DatabaseExt: Database {
 
     fn return_type_for_id(id: &Self::TypeInfo) -> Option<&'static str>;
 
+    fn get_custom_type(info: &Self::TypeInfo) -> Option<&'static str>;
+
     fn get_feature_gate(info: &Self::TypeInfo) -> Option<&'static str>;
 }
 
@@ -35,7 +37,8 @@ macro_rules! impl_database_ext {
             $($(#[$meta:meta])? $ty:ty $(| $input:ty)?),*$(,)?
         },
         ParamChecking::$param_checking:ident,
-        feature-types: $ty_info:ident => $get_gate:expr,
+        feature-types: $ty_info1:ident => $get_gate:expr,
+        get-custom-type: $ty_info2:ident => $get_custom_type:expr,
         row = $row:path,
         name = $db_name:literal
     ) => {
@@ -55,7 +58,7 @@ macro_rules! impl_database_ext {
                         $(#[$meta])?
                         _ if <$ty as sqlx_core::decode::Decode<$database>>::accepts(&info) => Some(input_ty!($ty $(, $input)?)),
                     )*
-                    _ => None
+                    _ => info.get_custom_type()
                 }
             }
 
@@ -69,12 +72,16 @@ macro_rules! impl_database_ext {
                         $(#[$meta])?
                         _ if <$ty as sqlx_core::decode::Decode<$database>>::accepts(&info) => return Some(stringify!($ty)),
                     )*
-                    _ => None
+                    _ => info.get_custom_type()
                 }
             }
 
-            fn get_feature_gate($ty_info: &Self::TypeInfo) -> Option<&'static str> {
+            fn get_feature_gate($ty_info1: &Self::TypeInfo) -> Option<&'static str> {
                 $get_gate
+            }
+
+            fn get_custom_type($ty_info2: &Self::TypeInfo) -> Option<&'static str> {
+                $get_custom_type
             }
         }
     }
