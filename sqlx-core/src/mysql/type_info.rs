@@ -44,6 +44,11 @@ impl MySqlTypeInfo {
         }
     }
 
+    #[doc(hidden)]
+    pub fn __map_custom_type(&self) -> Option<&'static str> {
+        None
+    }
+
     pub(crate) fn from_column(column: &ColumnDefinition) -> Option<Self> {
         if column.r#type == ColumnType::Null {
             None

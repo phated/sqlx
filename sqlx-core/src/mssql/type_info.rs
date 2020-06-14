@@ -7,6 +7,13 @@ use crate::type_info::TypeInfo;
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
 pub struct MssqlTypeInfo(pub(crate) ProtocolTypeInfo);
 
+impl MssqlTypeInfo {
+    #[doc(hidden)]
+    pub fn __map_custom_type(&self) -> Option<&'static str> {
+        None
+    }
+}
+
 impl TypeInfo for MssqlTypeInfo {}
 
 impl Display for MssqlTypeInfo {
