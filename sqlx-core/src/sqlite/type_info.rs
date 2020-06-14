@@ -29,6 +29,13 @@ pub(crate) enum DataType {
 #[cfg_attr(feature = "offline", derive(serde::Serialize, serde::Deserialize))]
 pub struct SqliteTypeInfo(pub(crate) DataType);
 
+impl SqliteTypeInfo {
+    #[doc(hidden)]
+    pub fn __map_custom_type(&self) -> Option<&'static str> {
+        None
+    }
+}
+
 impl Display for SqliteTypeInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)

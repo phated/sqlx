@@ -190,7 +190,7 @@ impl PgTypeInfo {
     }
 
     #[doc(hidden)]
-    pub fn get_custom_type(&self) -> Option<&'static str> {
+    pub fn __map_custom_type(&self) -> Option<&'static str> {
         match self.0.name() {
             "NODE_TYPE" | "node_type" => Some("NodeType"),
             "CARD_RARITY" | "card_rarity" => Some("CardRarity"),
