@@ -126,16 +126,14 @@ impl PgConnection {
     }
 
     async fn fetch_type_by_oid(&mut self, oid: u32) -> Result<PgTypeInfo, Error> {
-        let (name, category, relation_id): (String, i8, u32) = query_as(
-            "SELECT typname, typcategory, typrelid FROM pg_catalog.pg_type WHERE oid = $1",
+        let (name, category, relation_id, element_id): (String, i8, u32, u32) = query_as(
+            "SELECT typname, typcategory, typrelid, typelem FROM pg_catalog.pg_type WHERE oid = $1",
         )
         .bind(oid)
         .fetch_one(&mut *self)
         .await?;
 
         match category as u8 {
-            b'A' => Err(err_protocol!("user-defined array types are unsupported")),
-
             b'P' => Err(err_protocol!("pseudo types are unsupported")),
 
             b'R' => self.fetch_range_by_oid(oid, name).await,
@@ -144,12 +142,55 @@ impl PgConnection {
 
             b'C' => self.fetch_composite_by_oid(oid, relation_id, name).await,
 
+            b'A' => self.fetch_array_by_oid(oid, element_id, name).await,
+
             _ => Ok(PgTypeInfo(PgType::Custom(Arc::new(PgCustomType {
                 kind: PgTypeKind::Simple,
                 name: name.into(),
                 oid,
             })))),
         }
+    }
+
+    async fn fetch_array_by_oid(
+        &mut self,
+        oid: u32,
+        element_oid: u32,
+        name: String,
+    ) -> Result<PgTypeInfo, Error> {
+        let (element_name, category, relation_id): (String, i8, u32) = query_as(
+            "SELECT typname, typcategory, typrelid FROM pg_catalog.pg_type WHERE oid = $1",
+        )
+        .bind(element_oid)
+        .fetch_one(&mut *self)
+        .await?;
+
+        let element = match category as u8 {
+            b'A' => Err(err_protocol!("arrays are unsupported")),
+
+            b'P' => Err(err_protocol!("pseudo types are unsupported")),
+
+            b'R' => self.fetch_range_by_oid(element_oid, element_name).await,
+
+            b'E' => self.fetch_enum_by_oid(element_oid, element_name).await,
+
+            b'C' => {
+                self.fetch_composite_by_oid(element_oid, relation_id, element_name)
+                    .await
+            }
+
+            _ => Ok(PgTypeInfo(PgType::Custom(Arc::new(PgCustomType {
+                kind: PgTypeKind::Simple,
+                name: element_name.into(),
+                oid: element_oid,
+            })))),
+        };
+
+        Ok(PgTypeInfo(PgType::Custom(Arc::new(PgCustomType {
+            kind: PgTypeKind::Array(element?),
+            name: name.into(),
+            oid,
+        }))))
     }
 
     async fn fetch_enum_by_oid(&mut self, oid: u32, name: String) -> Result<PgTypeInfo, Error> {
